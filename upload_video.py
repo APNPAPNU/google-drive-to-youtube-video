@@ -135,14 +135,12 @@ def resumable_upload(insert_request):
                 else:
                     exit("The upload failed with an unexpected response: %s" % response)
         except (HttpError, e):
-
             if e.resp.status in RETRIABLE_STATUS_CODES:
                 error = "A retriable HTTP error %d occurred:\n%s" % (e.resp.status, e.content)
             else:
                 raise
         except RETRIABLE_EXCEPTIONS as e:
             error = "A retriable error occurred: %s" % e
-
         if error is not None:
             print(error)
             retry += 1
@@ -175,5 +173,5 @@ if __name__ == '__main__':
     youtube = get_authenticated_service(args)
     try:
         initialize_upload(youtube, args)
-    except HttpError as e:
+    except (HttpError, e):
         print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
